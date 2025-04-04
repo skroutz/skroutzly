@@ -1,23 +1,25 @@
 <% content_for :title, "Editing short url" %>
 
 <div class="max-w-3xl mx-auto">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Edit Short URL</h1>
-    <div>
-      <%= link_to short_url_path(@short_url), class: "text-indigo-600 hover:text-indigo-800" do %>
-        <span class="flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Back
-        </span>
-      <% end %>
+  <%= turbo_frame_tag dom_id(@short_url) do %>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Edit Short URL</h1>
+      <div>
+        <%= link_to short_url_path(@short_url), class: "text-indigo-600 hover:text-indigo-800", data: { turbo_frame: "_top" } do %>
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back
+          </span>
+        <% end %>
+      </div>
     </div>
-  </div>
 
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="p-6">
-      <%= render "form", short_url: @short_url %>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+      <div class="p-6">
+        <%= render "form", short_url: @short_url %>
+      </div>
     </div>
-  </div>
+  <% end %>
 </div>

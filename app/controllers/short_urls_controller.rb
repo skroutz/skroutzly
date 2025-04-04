@@ -25,34 +25,113 @@ class ShortUrlsController < ApplicationController
 
   # POST /short_urls
   def create
+    preowned_short_urls_count = current_user.short_urls.count
     @short_url = current_user.short_urls.build(short_url_params)
 
-    if @short_url.save
-      redirect_to @short_url, notice: "Short url was successfully created."
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @short_url.save
+        @pagy, @short_urls = pagy(current_user.short_urls.order(id: :desc))
+
+        format.html { redirect_to short_urls_path, notice: "Short URL was successfully created." }
+        format.turbo_stream do
+          flash.now[:notice] = "Short URL was successfully created."
+          # For the empty state, we need to handle it differently
+          if preowned_short_urls_count.zero?
+            # If this is the first URL, replace the entire content and include the new URL
+            render turbo_stream: [
+              turbo_stream.update("url_list_container", partial: "short_urls/url_list", locals: { short_urls: @short_urls, pagy: @pagy }),
+              turbo_stream.replace("new_short_url", partial: "short_urls/form", locals: { short_url: ShortUrl.new }),
+              turbo_stream.append("flash", partial: "layouts/flash")
+            ]
+          else
+            # Append the new row to the table body
+            render turbo_stream: [
+              turbo_stream.prepend("short_urls", partial: "short_urls/short_url", locals: { short_url: @short_url }),
+              turbo_stream.replace("new_short_url", partial: "short_urls/form", locals: { short_url: ShortUrl.new }),
+              turbo_stream.append("flash", partial: "layouts/flash")
+            ]
+          end
+        end
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream do
+          flash.now[:alert] = "Short URL was not created."
+          render turbo_stream: [
+            turbo_stream.replace("new_short_url", partial: "short_urls/form", locals: { short_url: @short_url }),
+            turbo_stream.append("flash", partial: "layouts/flash")
+          ]
+        end
+      end
     end
   end
 
   # PATCH/PUT /short_urls/1
   def update
-    if @short_url.update(short_url_params)
-      redirect_to @short_url, notice: "Short url was successfully updated.", status: :see_other
-    else
-      render :edit, status: :unprocessable_entity
+    respond_to do |format|
+      if @short_url.update(short_url_params)
+        format.html { redirect_to short_url_path(@short_url), notice: "Short URL was successfully updated." }
+        format.turbo_stream do
+          flash.now[:notice] = "Short URL was successfully updated."
+          render turbo_stream: [
+            turbo_stream.replace(@short_url,
+              template: "short_urls/show",
+              locals: { short_url: @short_url }),
+            turbo_stream.append("flash", partial: "layouts/flash")
+          ]
+        end
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream do
+          flash.now[:alert] = "Short URL was not updated."
+          render turbo_stream: turbo_stream.append("flash", partial: "layouts/flash")
+        end
+      end
     end
   end
 
   # DELETE /short_urls/1
   def destroy
-    @short_url.destroy!
-    redirect_to short_urls_path, notice: "Short url was successfully destroyed.", status: :see_other
+    # Store the ID before destroying the record
+    url_id = dom_id(@short_url)
+    @short_url.destroy
+
+    respond_to do |format|
+      # Reload @short_urls after deletion
+      @pagy, @short_urls = pagy(current_user.short_urls.order(id: :desc))
+
+      format.html { redirect_to short_urls_url, notice: "Short URL was successfully destroyed." }
+      format.turbo_stream do
+        flash.now[:notice] = "Short URL was successfully destroyed."
+
+        if current_user.short_urls.count.zero?
+          # If no URLs left, update the entire container to show empty state
+          render turbo_stream: [
+            turbo_stream.update("url_list_container", partial: "url_list", locals: { short_urls: @short_urls, pagy: @pagy }),
+            turbo_stream.update("flash", partial: "layouts/flash")
+          ]
+        else
+          # Otherwise just remove the deleted entry by its DOM ID
+          render turbo_stream: [
+            turbo_stream.remove(url_id),
+            turbo_stream.update("flash", partial: "layouts/flash")
+          ]
+        end
+      end
+    end
   end
 
   # POST /short_urls/1/reset_stats
   def reset_stats
     @short_url.reset_stats!
-    redirect_to @short_url, notice: "Statistics reset successfully."
+
+    respond_to do |format|
+      format.html { redirect_to short_url_path(@short_url), notice: "Statistics reset successfully." }
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(@short_url, template: "short_urls/show", locals: { short_url: @short_url })
+        ]
+      end
+    end
   end
 
   # GET /:slug - Redirect to the original URL

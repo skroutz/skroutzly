@@ -23,7 +23,13 @@
   <% else %>
     <div class="p-8 text-center">
       <p class="text-gray-500 mb-4">You haven't created any short URLs yet.</p>
-      <%= link_to "Create your first short URL", new_short_url_path, class: "text-indigo-500 hover:text-indigo-700 font-medium border-0 bg-transparent p-0 cursor-pointer" %>
+      <button type="button"
+              data-controller="toggle"
+              data-action="toggle#show"
+              data-toggle-element-id-value="new_short_url_form"
+              class="text-indigo-500 hover:text-indigo-700 font-medium border-0 bg-transparent p-0 cursor-pointer">
+        Create your first short URL
+      </button>
     </div>
   <% end %>
 </div>
