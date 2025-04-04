@@ -1,0 +1,25 @@
+{
+  "name": "Skroutzly",
+  "forwardPorts": [ 3000 ],
+  "postCreateCommand": "bin/setup --skip-server",
+  "image": "ghcr.io/rails/devcontainer/images/ruby:3.4.1",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/rails/devcontainer/features/sqlite3": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rebornix.ruby",
+        "shopify.ruby-lsp",
+        "kaiwood.endwise",
+        "aliariff.vscode-erb-beautify",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
+      }
+    }
+  }
+}
