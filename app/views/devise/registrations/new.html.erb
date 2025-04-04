@@ -1,0 +1,57 @@
+<div
+  class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+>
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Sign up
+      </h2>
+      <% if devise_mapping.confirmable? %>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Or <%= link_to "sign in", new_session_path(resource_name), class:
+        "font-medium text-indigo-600 hover:text-indigo-500" %>
+      </p>
+      <% end %>
+    </div>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { data: { turbo: false } }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <div class="mt-8 space-y-6">
+        <div class="rounded-md shadow-sm -space-y-px">
+          <div>
+            <%= f.label :email, class: "sr-only", for: "email-address" %>
+            <%= f.email_field :email, id: "email-address", autofocus: true, autocomplete: "email", placeholder: "Email address", class:
+            "appearance-none rounded-none relative block w-full px-3 py-2 border
+            border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md
+            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+            focus:z-10 sm:text-sm" %>
+          </div>
+          <div>
+            <%= f.label :password, for: "password", class: "sr-only" %>
+            <%= f.password_field :password, id: "password", autocomplete: "new-password", placeholder: "Password",
+            class: "appearance-none
+            rounded-none relative block w-full px-3 py-2 border border-gray-300
+            placeholder-gray-500 text-gray-900 focus:outline-none
+            focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            %>
+          </div>
+          <div>
+            <%= f.label :password_confirmation, for: "password-confirmation", class: "sr-only" %>
+            <%= f.password_field :password_confirmation, id: "password-confirmation", autocomplete: "new-password", placeholder: "Confirm password",
+            class: "appearance-none
+            rounded-none relative block w-full px-3 py-2 border border-gray-300
+            placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none
+            focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            %>
+          </div>
+        </div>
+        <div class="actions">
+          <%= f.submit "Sign up", class: "actions group relative w-full flex
+          justify-center py-2 px-4 border border-transparent text-sm font-medium
+          rounded-md text-white bg-indigo-600 hover:bg-indigo-700
+          focus:outline-none focus:ring-2 focus:ring-offset-2
+          focus:ring-indigo-500" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
