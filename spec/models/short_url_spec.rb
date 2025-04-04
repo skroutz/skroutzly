@@ -58,4 +58,17 @@ RSpec.describe ShortUrl, type: :model do
       expect(short_url.slug).to eq("custom")
     end
   end
+
+  describe "instance methods" do
+    let(:short_url) { FactoryBot.create(:short_url, user: user) }
+
+    it "registers clicks" do
+      expect { short_url.register_click! }.to change { short_url.clicks_count }.by(1)
+    end
+
+    it "returns the full short URL" do
+      allow(Rails.application.routes.url_helpers).to receive(:redirect_url).and_return("http://localhost:3000/#{short_url.slug}")
+      expect(short_url.short_url).to eq("http://localhost:3000/#{short_url.slug}")
+    end
+  end
 end

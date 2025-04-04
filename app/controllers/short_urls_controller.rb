@@ -46,6 +46,17 @@ class ShortUrlsController < ApplicationController
     redirect_to short_urls_path, notice: "Short url was successfully destroyed.", status: :see_other
   end
 
+  # GET /:slug - Redirect to the original URL
+  def redirect
+    @short_url = ShortUrl.find_by!(slug: params[:slug])
+    @short_url.register_click!
+
+    redirect_to @short_url.original_url, allow_other_host: true
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "Sorry, that short URL doesn't exist"
+    redirect_to root_path
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

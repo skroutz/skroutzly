@@ -8,6 +8,16 @@ class ShortUrl < ApplicationRecord
 
   before_validation :generate_slug, on: :create, if: -> { slug.blank? }
 
+  # Increment clicks counter
+  def register_click!
+    increment!(:clicks_count)
+  end
+
+  # Full short URL
+  def short_url
+    Rails.application.routes.url_helpers.redirect_url(slug: slug, host: ENV.fetch('APP_HOST', 'localhost:3000'))
+  end
+
   private
 
   # Generate a random unique slug if not provided

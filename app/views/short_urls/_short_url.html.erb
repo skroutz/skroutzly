@@ -5,7 +5,7 @@
   </div>
   <div>
     <strong class="block font-medium mb-1">Slug:</strong>
-    <%= short_url.slug %>
+    <%= link_to short_url.slug, short_url.short_url, target: '_blank' %>
   </div>
   <div>
     <strong class="block font-medium mb-1">Title:</strong>

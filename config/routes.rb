@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # This should always be the last route in the file, as it will catch all unmatched routes.
+  get "/:slug" => "short_urls#redirect", as: "redirect"
+
   # Defines the root path route ("/")
   root "pages#home"
 end
