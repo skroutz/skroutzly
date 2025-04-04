@@ -1,6 +1,6 @@
 class ShortUrlsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_short_url, only: %i[ show edit update destroy ]
+  before_action :set_short_url, only: %i[ show edit update destroy reset_stats ]
 
   # GET /short_urls
   def index
@@ -44,6 +44,12 @@ class ShortUrlsController < ApplicationController
   def destroy
     @short_url.destroy!
     redirect_to short_urls_path, notice: "Short url was successfully destroyed.", status: :see_other
+  end
+
+  # POST /short_urls/1/reset_stats
+  def reset_stats
+    @short_url.reset_stats!
+    redirect_to @short_url, notice: "Statistics reset successfully."
   end
 
   # GET /:slug - Redirect to the original URL

@@ -8,7 +8,11 @@ Rails.application.routes.draw do
 
   # Authenticated routes
   authenticated :user do
-    resources :short_urls
+    resources :short_urls do
+      member do
+        post "reset_stats"
+      end
+    end
     root "short_urls#index", as: :authenticated_root
   end
 

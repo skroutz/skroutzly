@@ -13,6 +13,11 @@ class ShortUrl < ApplicationRecord
     increment!(:clicks_count)
   end
 
+  # Reset stats
+  def reset_stats!
+    update!(clicks_count: 0)
+  end
+
   # Full short URL
   def short_url
     Rails.application.routes.url_helpers.redirect_url(slug: slug, host: ENV.fetch('APP_HOST', 'localhost:3000'))
