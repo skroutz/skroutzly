@@ -4,6 +4,9 @@
 
 Skroutzly is a user-friendly URL shortening service built with Ruby on Rails. This application allows users to create shortened versions of long URLs, making them easier to share and track.
 
+![image](https://github.com/user-attachments/assets/5cf5d0a2-59d7-47fa-8b0c-a420a75fb93d)
+
+
 ## What is a URL Shortener?
 
 A URL shortener is a web service that creates shorter aliases for long URLs. When users click on these shortened links, they are automatically redirected to the original URL. URL shorteners provide several benefits:
