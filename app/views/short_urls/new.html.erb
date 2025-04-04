@@ -1,9 +1,23 @@
 <% content_for :title, "New short url" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New short url</h1>
+<div class="max-w-3xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Create New Short URL</h1>
+    <div>
+      <%= link_to short_urls_path, class: "text-indigo-600 hover:text-indigo-800", data: { turbo_frame: "_top" } do %>
+        <span class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to list
+        </span>
+      <% end %>
+    </div>
+  </div>
 
-  <%= render "form", short_url: @short_url %>
-
-  <%= link_to "Back to short urls", short_urls_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="p-6">
+      <%= render "form", short_url: @short_url %>
+    </div>
+  </div>
 </div>

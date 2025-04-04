@@ -1,9 +1,10 @@
-<%= form_with(model: short_url, class: "contents") do |form| %>
+<%= form_with(model: short_url) do |form| %>
   <% if short_url.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(short_url.errors.count, "error") %> prohibited this short_url from being saved:</h2>
-
-      <ul class="list-disc ml-6">
+    <div class="bg-red-50 p-4 rounded mb-4">
+      <div class="font-medium text-red-600">
+        <%= pluralize(short_url.errors.count, "error") %> prohibited this short URL from being saved:
+      </div>
+      <ul class="mt-2 text-sm text-red-600 list-disc list-inside">
         <% short_url.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,22 +12,30 @@
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :original_url %>
-    <%= form.text_field :original_url, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": short_url.errors[:original_url].none?, "border-red-400 focus:outline-red-600": short_url.errors[:original_url].any?}] %>
-  </div>
+  <div class="grid grid-cols-1 gap-y-4">
+    <div>
+      <%= form.label :title, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :title, class: "mt-1 px-3 py-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "Optional title for your URL" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :slug %>
-    <%= form.text_field :slug, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": short_url.errors[:slug].none?, "border-red-400 focus:outline-red-600": short_url.errors[:slug].any?}] %>
-  </div>
+    <div>
+      <%= form.label :original_url, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.url_field :original_url, class: "mt-1 px-3 py-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "https://example.com/very-long-url" %>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :title %>
-    <%= form.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": short_url.errors[:title].none?, "border-red-400 focus:outline-red-600": short_url.errors[:title].any?}] %>
-  </div>
+    <div>
+      <%= form.label :slug, class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1 flex rounded-md shadow-sm">
+        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+          <%= request.base_url %>/
+        </span>
+        <%= form.text_field :slug, class: "flex-1 px-3 py-2 block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "custom-slug (optional)" %>
+      </div>
+      <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate</p>
+    </div>
 
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+    <div class="flex justify-end space-x-3 pt-4">
+      <%= form.submit class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    </div>
   </div>
 <% end %>

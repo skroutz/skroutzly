@@ -1,18 +1,46 @@
-<div id="<%= dom_id short_url %>" class="w-full sm:w-auto my-5 space-y-5">
-  <div>
-    <strong class="block font-medium mb-1">Original url:</strong>
-    <%= short_url.original_url %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Slug:</strong>
-    <%= link_to short_url.slug, short_url.short_url, target: '_blank' %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Title:</strong>
-    <%= short_url.title %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Clicks count:</strong>
-    <%= short_url.clicks_count %>
-  </div>
-</div>
+<tr id="<%= dom_id(short_url) %>" class="hover:bg-gray-50">
+  <td class="px-6 py-4">
+    <div class="flex flex-col">
+      <span class="font-medium text-gray-900"><%= short_url.title.presence || "Untitled" %></span>
+      <span class="text-sm text-gray-500 truncate max-w-xs"><%= short_url.original_url %></span>
+    </div>
+  </td>
+  <td class="px-6 py-4">
+    <div class="flex items-center space-x-2 group" data-controller="clipboard">
+      <span class="text-sm text-indigo-600 font-medium"><%= short_url.slug %></span>
+      <button data-clipboard-text="<%= short_url.short_url %>" class="copy-btn text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      </button>
+    </div>
+  </td>
+  <td class="px-6 py-4">
+    <span class="text-sm font-medium text-gray-900"><%= short_url.clicks_count %></span>
+  </td>
+  <td class="px-6 py-4 text-sm text-gray-500">
+    <%= time_ago_in_words(short_url.created_at) %> ago
+  </td>
+  <td class="px-6 py-4 text-right text-sm font-medium">
+    <div class="flex justify-end space-x-2">
+      <%= link_to short_url_path(short_url), class: "text-indigo-600 hover:text-indigo-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      <% end %>
+
+      <%= link_to edit_short_url_path(short_url), class: "text-indigo-600 hover:text-indigo-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      <% end %>
+
+      <%= button_to short_url_path(short_url), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' } }, class: "text-red-600 hover:text-red-900" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      <% end %>
+    </div>
+  </td>
+</tr>

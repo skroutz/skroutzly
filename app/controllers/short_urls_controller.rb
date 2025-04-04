@@ -4,7 +4,10 @@ class ShortUrlsController < ApplicationController
 
   # GET /short_urls
   def index
-    @short_urls = current_user.short_urls
+    @pagy, @short_urls = pagy(current_user.short_urls.order(id: :desc))
+
+    # For the new short URL form
+    @short_url = ShortUrl.new
   end
 
   # GET /short_urls/1
