@@ -1,9 +1,10 @@
 class ShortUrlsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_short_url, only: %i[ show edit update destroy ]
 
   # GET /short_urls
   def index
-    @short_urls = ShortUrl.all
+    @short_urls = current_user.short_urls
   end
 
   # GET /short_urls/1
@@ -21,7 +22,7 @@ class ShortUrlsController < ApplicationController
 
   # POST /short_urls
   def create
-    @short_url = ShortUrl.new(short_url_params)
+    @short_url = current_user.short_urls.build(short_url_params)
 
     if @short_url.save
       redirect_to @short_url, notice: "Short url was successfully created."
@@ -49,11 +50,14 @@ class ShortUrlsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_short_url
-    @short_url = ShortUrl.find(params.expect(:id))
+    @short_url = current_user.short_urls.find(params.expect(:id))
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "You don't have access to that short URL"
+    redirect_to short_urls_path
   end
 
   # Only allow a list of trusted parameters through.
   def short_url_params
-    params.expect(short_url: [ :original_url, :slug, :title, :user_id, :clicks_count ])
+    params.expect(short_url: [ :original_url, :slug, :title ])
   end
 end
