@@ -1,0 +1,21 @@
+<% if notice %>
+  <div data-controller="flash" class="bg-green-50 border-l-4 border-green-400 p-4 mb-6 relative transition-opacity duration-500 flex items-center" role="alert">
+    <p class="text-green-700 flex-grow pr-6"><%= notice %></p>
+    <button data-action="click->flash#close" class="text-green-700 hover:text-green-900" aria-label="Close">
+      <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+<% end %>
+
+<% if alert %>
+  <div data-controller="flash" class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 relative transition-opacity duration-500 flex items-center" role="alert">
+    <p class="text-red-700 flex-grow pr-6"><%= alert %></p>
+    <button data-action="click->flash#close" class="text-red-700 hover:text-red-900" aria-label="Close">
+      <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+<% end %>

@@ -10,4 +10,9 @@
       <p class="text-gray-600 mt-2">Sign up to create your own custom short URLs</p>
     </div>
   </div>
+
+  <div class="flex justify-center space-x-4">
+    <%= link_to "Sign Up", new_user_registration_path, class: "bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded font-medium" %>
+    <%= link_to "Sign In", new_user_session_path, class: "bg-gray-100 hover:bg-gray-200 text-indigo-600 py-2 px-6 rounded font-medium" %>
+  </div>
 </div>

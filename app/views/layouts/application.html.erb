@@ -21,9 +21,40 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-gray-100 min-h-screen">
+    <header class="bg-indigo-600 text-white shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <div class="flex items-center">
+            <%= link_to root_path, class: "text-xl font-bold text-white hover:text-gray-200" do %>
+              Skroutzly
+            <% end %>
+          </div>
+          <div class="flex items-center space-x-4">
+            <% if user_signed_in? %>
+              <span class="text-sm">
+                <%= current_user.email %>
+              </span>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "bg-indigo-700 hover:bg-indigo-800 text-white py-1 px-3 rounded text-sm" %>
+            <% else %>
+              <%= link_to "Sign In", new_user_session_path, class: "bg-indigo-700 hover:bg-indigo-800 text-white py-1 px-3 rounded text-sm" %>
+              <%= link_to "Sign Up", new_user_registration_path, class: "bg-white hover:bg-gray-100 text-indigo-600 py-1 px-3 rounded text-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div id="flash">
+        <%= render "layouts/flash" %>
+      </div>
+
       <%= yield %>
     </main>
+
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-500 text-sm">
+      <p>&copy; <%= Date.current.year %> Skroutzly URL Shortener</p>
+    </footer>
   </body>
 </html>
