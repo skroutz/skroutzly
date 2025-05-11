@@ -136,7 +136,12 @@ class ShortUrlsController < ApplicationController
 
   # GET /:slug - Redirect to the original URL
   def redirect
-    @short_url = ShortUrl.find_by!(slug: params[:slug])
+    # Use cache to improve performance on frequently accessed URLs
+    slug = params[:slug]
+    @short_url = Rails.cache.fetch("short_url/#{slug}", expires_in: 1.hour) do
+      ShortUrl.find_by!(slug: slug)
+    end
+    
     @short_url.register_click!
 
     redirect_to @short_url.original_url, allow_other_host: true
@@ -149,7 +154,7 @@ class ShortUrlsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_short_url
-    @short_url = current_user.short_urls.find(params.expect(:id))
+    @short_url = current_user.short_urls.find(params.require(:id))
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = "You don't have access to that short URL"
     redirect_to short_urls_path
@@ -157,6 +162,6 @@ class ShortUrlsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def short_url_params
-    params.expect(short_url: [ :original_url, :slug, :title ])
+    params.require(:short_url).permit(:original_url, :slug, :title)
   end
 end
