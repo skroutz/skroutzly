@@ -1,11 +1,16 @@
 <%= turbo_frame_tag dom_id(short_url) do %>
-  <%= form_with(model: short_url) do |form| %>
+  <%= form_with(model: short_url, data: { controller: "form-validation" }) do |form| %>
     <% if short_url.errors.any? %>
-      <div class="bg-red-50 p-4 rounded mb-4">
-        <div class="font-medium text-red-600">
-          <%= pluralize(short_url.errors.count, "error") %> prohibited this short URL from being saved:
+      <div class="bg-red-50 p-4 rounded mb-4 border border-red-200">
+        <div class="flex items-center">
+          <svg class="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div class="font-medium text-red-600">
+            <%= pluralize(short_url.errors.count, "error") %> prohibited this short URL from being saved:
+          </div>
         </div>
-        <ul class="mt-2 text-sm text-red-600 list-disc list-inside">
+        <ul class="mt-2 text-sm text-red-600 list-disc list-inside ml-5">
           <% short_url.errors.each do |error| %>
             <li><%= error.full_message %></li>
           <% end %>
@@ -13,42 +18,72 @@
       </div>
     <% end %>
 
-    <div class="grid grid-cols-1 gap-y-4">
+    <div class="grid grid-cols-1 gap-y-5">
       <div>
         <%= form.label :title, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :title, class: "mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "Optional title for your URL" %>
+        <%= form.text_field :title, 
+            class: "mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", 
+            placeholder: "Optional title for your URL",
+            maxlength: 255,
+            data: { form_validation_target: "field" } %>
+        <p class="mt-1 text-xs text-gray-500">Give your short URL a memorable name (max 255 characters)</p>
       </div>
 
       <div>
         <%= form.label :original_url, class: "block text-sm font-medium text-gray-700" %>
-        <%= form.url_field :original_url, class: "mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "https://example.com/very-long-url" %>
+        <div class="relative">
+          <%= form.url_field :original_url, 
+              class: "mt-1 p-2 pl-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", 
+              placeholder: "https://example.com/very-long-url",
+              required: true,
+              data: { form_validation_target: "field", action: "blur->form-validation#validateUrl" } %>
+          <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none pt-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          </div>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">URLs without http:// or https:// will have http:// prepended</p>
       </div>
 
       <div>
         <%= form.label :slug, class: "block text-sm font-medium text-gray-700" %>
         <div class="mt-1 flex rounded-md shadow-sm">
-          <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+          <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm whitespace-nowrap">
             <%= request.base_url %>/
           </span>
-          <%= form.text_field :slug, class: "flex-1 p-2 block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "custom-slug (optional)" %>
+          <%= form.text_field :slug, 
+              class: "flex-1 p-2 block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", 
+              placeholder: "custom-slug (optional)",
+              pattern: "[a-zA-Z0-9_-]+",
+              data: { form_validation_target: "field" } %>
         </div>
-        <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate</p>
+        <p class="mt-1 text-xs text-gray-500">Only letters, numbers, underscores and hyphens. Leave blank to auto-generate</p>
       </div>
 
-      <div class="flex justify-end space-x-3 pt-4">
+      <div class="flex justify-end space-x-3 pt-5">
         <% if !short_url.new_record? %>
-          <%= link_to "Cancel", short_url_path(short_url), class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500", data: { turbo_frame: "_top" } %>
+          <%= link_to "Cancel", short_url_path(short_url), class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150", data: { turbo_frame: "_top" } %>
         <% else %>
-          <button type="button"
-                  data-controller="toggle"
-                  data-action="toggle#hide"
-                  data-toggle-element-id-value="new_short_url_form"
-                  class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Cancel
-          </button>
+          <div class="flex items-center space-x-2">
+            <button type="button"
+                    data-controller="toggle"
+                    data-action="toggle#hide"
+                    data-toggle-element-id-value="new_short_url_form"
+                    class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150">
+              Cancel
+            </button>
+            
+            <button id="generateButton" type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150" data-action="form-validation#generateRandomSlug">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Generate Slug
+            </button>
+          </div>
         <% end %>
 
-        <%= form.submit class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <%= form.submit class: "inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150" %>
       </div>
     </div>
   <% end %>
